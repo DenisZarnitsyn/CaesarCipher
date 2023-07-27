@@ -1,7 +1,7 @@
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Cipher {
     //English alphabet ABC
@@ -14,17 +14,23 @@ public class Cipher {
                     '.', ',', '"', ':', '-', '!', '?', ' '});
     private static char encryptionSymbolAbc(char symbol, int key) {
         if (engAlphabetAbc.indexOf(symbol) != -1) {
+            if(key < 0){
+                return engAlphabetAbc.charAt(((engAlphabetAbc.indexOf(symbol) + key) % engAlphabetAbc.length()) + engAlphabetAbc.length());
+            }
             return engAlphabetAbc.charAt((engAlphabetAbc.indexOf(symbol) + key) % engAlphabetAbc.length());
         } else {
             return symbol;
         }
     }
     private static char encryptionSymbolABC(char symbol, int key){
-            if(engAlphabetABC.indexOf(symbol) != -1){
-                return engAlphabetABC.charAt((engAlphabetABC.indexOf(symbol) + key) % engAlphabetABC.length());
-            }else {
-                return symbol;
+        if(engAlphabetABC.indexOf(symbol) != -1){
+            if(key < 0){
+                return engAlphabetABC.charAt(((engAlphabetABC.indexOf(symbol) + key) % engAlphabetABC.length()) + engAlphabetABC.length());
             }
+            return engAlphabetABC.charAt((engAlphabetABC.indexOf(symbol) + key) % engAlphabetABC.length());
+        }else {
+            return symbol;
+        }
     }
     public static void encryption(String pathFile, int key) throws IOException {
         try (FileInputStream fis = new FileInputStream(pathFile)) {
@@ -38,9 +44,43 @@ public class Cipher {
                 }
             }
             System.out.print(encryptionText);
-            CreateWriteFile.createWriteFile(encryptionText, pathFile);
+           CreateWriteFile.createWriteFile(encryptionText, pathFile);
         }catch(IOException ex){
-                System.out.println(ex.getMessage());
+            System.out.println(ex.getMessage());
+        }
+    }
+    private String dictionary[] = {"hello", "world"};
+    public static void bruteForce(String pathFile) throws  IOException{
+        try (FileInputStream fis = new FileInputStream(pathFile)) {
+            String encryptionText = "";
+            int a = 0;
+            while ((a = fis.read()) != -1) {
+                encryptionText = encryptionText + String.valueOf((char) a);
             }
+            System.out.println(encryptionText);
+            int key = 0;
+            for (int i = 0; i < engAlphabetAbc.length(); i++) {
+                int b = 0;
+                String decryptionText = "";
+                while (b < encryptionText.length()) {
+                    if(Character.isUpperCase(encryptionText.charAt(b))) {
+                        decryptionText = decryptionText + String.valueOf(encryptionSymbolABC((char) encryptionText.charAt(b), key));
+                    }else{
+                        decryptionText = decryptionText + String.valueOf(encryptionSymbolAbc((char) encryptionText.charAt(b), key));
+                    }
+                    b++;
+                }
+                decryptionText = decryptionText.toLowerCase();
+                Pattern pattern = Pattern.compile("hello(\\w*)");
+                Matcher matcher = pattern.matcher(decryptionText);
+                while(matcher.find()) {
+                    System.out.println(matcher.group() + " key: " + key);
+                    encryption(pathFile, key);
+                }
+                key++;
+            }
+        }catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
     }
 }

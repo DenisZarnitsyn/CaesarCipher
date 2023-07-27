@@ -22,7 +22,10 @@ public class Main {
             key = (-1) * key;
             Cipher.encryption(pathFile, key);
         } else if (choice == 3) {
-
+            scanner.nextLine();
+            System.out.println("Enter the file path:");
+            String pathFile = scanner.nextLine();
+            Cipher.bruteForce(pathFile);
         }else{
             System.out.println("There is no such option. Make the right choice!");
         }

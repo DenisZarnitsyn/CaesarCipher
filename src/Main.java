@@ -10,14 +10,14 @@ public class Main {
             scanner.nextLine();
             System.out.println("Enter the file path:");
             String pathFile = scanner.nextLine();
-            System.out.println("Enter the encryption key:");
-            int Key = scanner.nextInt();
-            Cipher.encryption(pathFile, Key);
+            System.out.println("The encryption key ranges from -59 to 59:");
+            int key = scanner.nextInt();
+            Cipher.encryption(pathFile, key);
         }else if(choice == 2){
             scanner.nextLine();
             System.out.println("Enter the file path:");
             String pathFile = scanner.nextLine();
-            System.out.println("Enter the decryption key:");
+            System.out.println("The encryption key ranges from -59 to 59:");
             int key = scanner.nextInt();
             key = (-1) * key;
             Cipher.encryption(pathFile, key);
